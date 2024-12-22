@@ -37,7 +37,7 @@ string cleanText(string text) {
 
 string[] splitWords(string text) {
     string cleaned = cleanText(text);
-    return cleaned.split();
+    return cleaned.toLower.split();
 }
 
 int[string] wordOccurrence(string[] words) {
@@ -104,7 +104,10 @@ string findBestArticle(string word1, string word2, ArticleData[string] textDB) {
 }
 
 string generateTitle(int[string] wordFreq) {
-        string[] filteredWords;
+    string[] filteredWords;
+    string title = "";
+    int count = 0;
+    int validWordsCount = 0;
 
     foreach (key, value; wordFreq) {
         if (!conjunctions.canFind(key.toLower)) {
@@ -114,14 +117,24 @@ string generateTitle(int[string] wordFreq) {
 
     filteredWords.sort!((a, b) => wordFreq[b] < wordFreq[a]);
 
-    string title = "";
-    int count = 0;
-    while (count < 3) {
-        title ~= filteredWords[count] ~ " ";
+    string lastAddedWord = "";
+
+    while (validWordsCount < 3 && count < filteredWords.length) {
+        string currentWord = filteredWords[count];
+
+        if (lastAddedWord != "" && (currentWord.startsWith(lastAddedWord) || lastAddedWord.startsWith(currentWord))) {
+            count++; 
+            continue;
+        }
+
+        title ~= currentWord ~ " ";
+        lastAddedWord = currentWord;
+        validWordsCount++;
+
         count++;
     }
 
-    return title.strip();
+    return title.strip(); 
 }
 
 int levenshteinDistance(string a, string b) {
@@ -160,10 +173,30 @@ string[] findLexicalSimilarWords(string queryWord, int[string] wordList) {
         .array
         .sort!((a, b) => a.value < b.value);
 
-    string[] result;
+    string[] lexical;
     for(int i=0; i<5; i++) {
-        result ~= sortedWords[i].key;
+        lexical ~= sortedWords[i].key;
     }
 
-    return result;
+    return lexical;
+}
+
+string[] findMostSimilarWords(string queryWord, int[string] wordList) {
+    string[] lexical = findLexicalSimilarWords(queryWord, wordList);
+
+    int minDistance = int.max;
+    string word1, word2;
+
+    for (int i = 0; i < lexical.length; i++) {
+        for (int j = i + 1; j < lexical.length; j++) {
+            int dist = levenshteinDistance(lexical[i], lexical[j]);
+            if (dist < minDistance) {
+                minDistance = dist;
+                word1 = lexical[i];
+                word2 = lexical[j];
+            }
+        }
+    }
+
+    return [word1, word2];
 }

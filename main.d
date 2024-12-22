@@ -50,25 +50,34 @@ void main() {
     //  print.printGlobalStats(totalWordCount, totalWordFreq, totalConjunctionFreq, globalAlphaNumericFreq);
     // print.printArticleStats("zen5", textDB["zen5"]);
 
-    writeln("Enter your query...");
-    string query1;
-    readf("%s\n", query1);
-
-    string[] queryWords = query1.split(" ");
-
-    string bestArticle = findBestArticle(queryWords[0], queryWords[1], textDB);
-
-    if (bestArticle != "") {
-        writeln("The most relevant article is: ", bestArticle);
-        writefln("with title: %s", textDB[bestArticle].title);
-    } else {
-        writeln("No matching articles found.");
+    writeln("title:");
+    foreach (file, article; textDB) {
+        writeln(file, ": ", article.title);
     }
 
-    writeln("Enter your query...");
-    string query2;
-    readf("%s\n", query2);
 
-    string[] lexical = findLexicalSimilarWords(query2, totalWordFreq);
-    writeln(lexical);
+    // writeln("Enter your query...");
+    // string query1;
+    // readf("%s\n", query1);
+
+    // string[] queryWords = query1.split(" ");
+
+    // string bestArticle = findBestArticle(queryWords[0], queryWords[1], textDB);
+
+    // if (bestArticle != "") {
+    //     writeln("The most relevant article is: ", bestArticle);
+    //     writefln("with title: %s", textDB[bestArticle].title);
+    // } else {
+    //     writeln("No matching articles found.");
+    // }
+
+    // writeln("Enter your query...");
+    // string query2;
+    // readf("%s\n", query2);
+
+    // string[] lexical = findLexicalSimilarWords(query2, totalWordFreq);
+    // writeln(lexical);
+
+    // string[] similarWords = findMostSimilarWords(query2, totalWordFreq);
+    // writeln(similarWords);
 }
